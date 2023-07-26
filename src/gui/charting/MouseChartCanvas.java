@@ -2,7 +2,6 @@ package gui.charting;
 
 import data.MouseData;
 import main.Main;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,12 +35,13 @@ public class MouseChartCanvas extends JPanel
         float dataScale = 1.0f / ((float)Math.floor(dataWidth / getWidth()) + 1);
 
         int index = 0;
-        if(cursorPos > 100) index = cursorPos - 100;
+        int TRAIL_LENGTH = 100;
+        if(cursorPos > 100) index = cursorPos - TRAIL_LENGTH;
 
         for(int i = index; i < cursorPos; ++i)
         {
             Point p = new Point(data.get(i).x, data.get(i).y);
-            g.fillOval((int)(p.x * dataScale), (int)(p.y * dataScale), 5, 5 );
+            g.fillOval((int)(p.x * dataScale), (int)(p.y * dataScale), 4, 4 );
         }
 
         g.setColor(Color.black);

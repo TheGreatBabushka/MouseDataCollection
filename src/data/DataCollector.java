@@ -11,14 +11,14 @@ import java.util.List;
 
 public class DataCollector extends Thread
 {
-    final  int SAVE_EVERY_SECONDS = 60;
+    final int DATA_DUMP_SIZE = 5000;
     final List<MouseData> data = new LinkedList<>();
 
     volatile boolean collectData = false;
     volatile boolean survive = true;
     long lastCollectTime = 0;
     File outputDir =  new File(System.getProperty("user.dir") + "/data");
-    String saveFileName = "mouse-data-%1.csv";
+    String saveFileName = "mouse-data-%1.mscsv";
 
     OutputType outputType = OutputType.FILE;
 
@@ -40,7 +40,7 @@ public class DataCollector extends Thread
                 if ((System.currentTimeMillis() - lastCollectTime) > 10)
                     collect();
 
-                if(data.size() >= 100 * SAVE_EVERY_SECONDS)
+                if(data.size() >= DATA_DUMP_SIZE)
                 {
                     dump();
                 }
@@ -68,7 +68,13 @@ public class DataCollector extends Thread
     private void collect()
     {
         Point p = MouseInfo.getPointerInfo().getLocation();
-        data.add(new MouseData(p.x, p.y, lastCollectTime = System.currentTimeMillis()));
+        if(data.isEmpty()) data.add(new MouseData(p.x, p.y, lastCollectTime = System.currentTimeMillis()));
+        else {
+            MouseData lastPoint = data.get(data.size() - 1);
+
+            if (lastPoint.x != p.x || lastPoint.y != p.y)
+                data.add(new MouseData(p.x, p.y, lastCollectTime = System.currentTimeMillis()));
+        }
     }
 
     private void saveToDatabase()
